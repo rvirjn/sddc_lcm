@@ -1,9 +1,24 @@
 # sddc_lcm
 Knowledge Based Life Cycle Management for Applications &amp;   Infrastructure Components in Scaled Hyper Converged Software Defined Data Centers
 
+Refer full_project.pdf file for details
+------
+
+google doc help
+--------------
+Automatic Log Analysis using Machine Learning  : http://uu.diva-portal.org/smash/get/diva2:667650/FULLTEXT01.pdf
 
 
-google doc help:
+Execution Environment:
+-------------------
+jupyter Docker container on AWS Ec2:
+https://jupyter.ranjanravi.com/tree/sddc_lcm
+password: jupyter
 
-Automatic Log Analysis using Machine Learning  : 
-      http://uu.diva-portal.org/smash/get/diva2:667650/FULLTEXT01.pdf
+Docker help:
+--------------
+https://hub.docker.com/repository/docker/raviranjanamu/jupyter
+
+AWS VM IP
+-------
+13.234.110.245 ubuntu 20
