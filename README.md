@@ -1,7 +1,7 @@
 # sddc_lcm
 Knowledge Based Life Cycle Management for Applications &amp;   Infrastructure Components in Scaled Hyper Converged Software Defined Data Centers
 
-Refer full_project.pdf file for details
+https://github.com/rvirjn/sddc_lcm/blob/main/project_full.pdf
 ------
 
 google doc help
