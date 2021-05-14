@@ -1,6 +1,9 @@
 # sddc_lcm
 Knowledge Based Life Cycle Management for Applications &amp;   Infrastructure Components in Scaled Hyper Converged Software Defined Data Centers
 
+# production VM
+13.234.110.245
+
 https://github.com/rvirjn/sddc_lcm/blob/main/project_full.pdf
 ------
 
