@@ -1,19 +1,18 @@
+from util import get_log_files, get_data_to_export, export_to_file
+
+__author__ = 'raviranjan'
+
+LOG_DIR = "logs"
+TIME_STAMP_PATTERN = "^(2[0-3]|[01]?[0-9]):(0[1-9]{1}|[1-5]{1}[0-9]):(0[1-9]{1}|[1-5]{1}[0-9])$"
+HOST_PATTERN = r'(^\S+\.[\S+\.]+\S+)\s'
+LOGGER_FILE_PATTERN = r'(^\S+\.[\S+\.]+\S+)\s'
+ERROR_PATTERN = 'ERROR:'
+INFO_PATTERN = 'INFO:'
+DEBUG_PATTERN = 'DEBUG:'
+
+log_files = get_log_files(log_dir=LOG_DIR)
 
 
-from util import get_log_files
-log_dir = "logs"
-time_stamp_pattern = r'\[(\d{2}/\w{3}/\d{4}:\d{2}:\d{2}:\d{2} -\d{4})]'
-host_pattern = r'(^\S+\.[\S+\.]+\S+)\s'
-logger_file_pattern = r'(^\S+\.[\S+\.]+\S+)\s'
-has_error_pattern = 'ERROR:'
-regex = '(<property name="(.*?)">(.*?)<\/property>)'
-log_files = get_log_files(log_dir=log_dir)
+excel_export_data = get_data_to_export(log_file=log_files[0], column_names=['line', 'info', 'error', 'debug', 'warn', 'exception'])
 
-from util import finditer_
-# finditer_(log_file_path=log_files[0], regex=has_error_pattern)
-
-from util import findall_
-search_lines = findall_(log_file=log_files[0], regex=has_error_pattern)
-
-from util import export_to_file
-export_to_file(export_folder=log_dir, dict_with_list_values={"HasError": search_lines})
+# export_to_file(export_folder=LOG_DIR, dict_with_list_values=excel_export_data)

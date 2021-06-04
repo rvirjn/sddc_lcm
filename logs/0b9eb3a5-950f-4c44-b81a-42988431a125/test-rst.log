@@ -1,6 +1,6 @@
-2021-04-22T14:05:11.439Z [WARNING testrst.py::main::128::MainThread] --setup-info-json
-2021-04-22T14:05:11.472Z [INFO testmanager.py::get_vc_connection::130::MainThread] Ignoring VC connection for public, since not available
-2021-04-22T14:05:11.474Z [INFO testmanager.py::setup_testargs::395::MainThread] Ignoring VC connection for non rv environment
+2021-04-22T14:05:11.439Z [WARNING testrst.py::main::128::MainThread] --setup-info-json 415-555-4242
+2021-04-22T14:05:11.472Z [INFO testmanager.py::get_vc_connection::130::MainThread] Ignoring VC connection for public, since not available 8184046618
+2021-04-22T14:05:11.474Z [INFO testmanager.py::setup_testargs::395::MainThread] Ignoring VC connection for non rv environment 415-555-4242
 2021-04-22T14:05:11.491Z [DEBUG testrst.py::main::137::MainThread] Starting Bootstrap
 2021-04-22T14:05:11.491Z [DEBUG ioc.py::__debug::36::MainThread] Registering singleton callback for <class 'utils.bringup.rest.bringupjsonhelper.BringupJson'>
 2021-04-22T14:05:11.491Z [DEBUG ioc.py::__debug::36::MainThread] Registering singleton callback for <class 'rv.license.licensehelper.LicenseHelper'>

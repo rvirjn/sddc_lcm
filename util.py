@@ -2,7 +2,6 @@ import re
 import os
 import time
 from time import strftime
-import pandas as pd
 
 
 def export_to_file(export_folder, dict_with_list_values=None):
@@ -20,15 +19,42 @@ def export_to_file(export_folder, dict_with_list_values=None):
     export_file_path = export_folder + "/" + time_now + ".xlsx"
     columns = dict_with_list_values.keys()
     print('Exporting columns %s to %s' % (columns, export_file_path))
+    import pandas as pd
     df = pd.DataFrame(dict_with_list_values, columns=columns)
     df.to_excel(export_file_path, index=False, header=True)
     print(export_file_path)
     return export_file_path
 
 
-def create_dict_from_list():
-    dict_from_list = {}
-    return dict_from_list
+def get_data_to_export(log_file, column_names=['line', 'info', 'error', 'debug', 'warn', 'exception']):
+    excel_export_data = {
+    }
+    for column_name in column_names:
+        excel_export_data[column_name] = []
+    print("Define column %s" % excel_export_data)
+    with open(log_file) as f:
+        for line in f:
+            one_row_values = {} # store one row value with key as column name and its value
+            for column_name in column_names:
+                column_name = column_name.lower()
+                line = line.lower()
+                if column_name in line:
+                    column_value = 1
+                else:
+                    column_value = 0
+                if column_name == "line":
+                    one_row_values[column_name] = line
+                else:
+                    one_row_values[column_name] = column_value
+            for column_name in one_row_values:
+                # append the list value
+                existing_one_column_values = excel_export_data[column_name]
+                existing_one_column_values.append(one_row_values[column_name])
+                excel_export_data[column_name] = existing_one_column_values
+            search_re(line)
+
+    # print("%s" % excel_export_data)
+    return excel_export_data
 
 
 def get_log_files(log_dir):
@@ -58,7 +84,35 @@ def findall_(log_file, regex):
     return matched_lines
 
 
+def search_re(line, pattern="04/24/2021 11:23:41 am"):
+    # Python program to illustrate
+    # Matching regex objects
+    match = re.match(pattern, line)
+    if not match:
+        regex_com = re.compile(pattern)
+        match = regex_com.search(line)
+        if match:
+            value = match.group()
+            print('found using re.compile: %s' % value)
+            return value
+        else:
+            print('not Found using re.compile also:')
+            return ''
+    else:
+        value = match.group()
+        print('Found using re.match: %s' % value)
+        return value
+
+
 def finditer_(log_file_path, regex, read_line=True, re_parse=False):
+    """
+    regex = '(<property name="(.*?)">(.*?)<\/property>)'
+    :param log_file_path:
+    :param regex:
+    :param read_line:
+    :param re_parse:
+    :return:
+    """
     with open(log_file_path, "r") as f:
         match_list = []
         if read_line:
@@ -76,9 +130,8 @@ def finditer_(log_file_path, regex, read_line=True, re_parse=False):
     f.close()
     if re_parse:
         match_list = finditer_again(match_list, regex)
-    match_list_clean = list(set(match_list))
-    print(match_list_clean)
-    return match_list_clean
+    print(match_list)
+    return match_list
 
 
 def finditer_again(parsed_data, regex):
