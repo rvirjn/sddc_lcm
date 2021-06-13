@@ -38,6 +38,8 @@ time_stamp_pattern = r'\[(\d{2}/\w{3}/\d{4}:\d{2}:\d{2}:\d{2} -\d{4})]'
 host_pattern = r'(^\S+\.[\S+\.]+\S+)\s'
 logger_file_pattern = r'(^\S+\.[\S+\.]+\S+)\s'
 has_error_pattern = r''
+excel_file_path = "data/excel_data.xlsx"
+
 
 ### Get log files
 log_files = util.get_log_files(log_dir=LOG_DIR)
@@ -46,9 +48,7 @@ print(log_files)
 
 ### Get Data from logs and export to Excel
 excel_export_data = util.get_data_to_export(log_file=log_files[0], column_names=['line', 'info', 'error', 'debug', 'warn', 'exception'])
-DATA_DIR = "data"
-util.export_to_file(export_folder=DATA_DIR, dict_with_list_values=excel_export_data, export_file_path="data/excel_data.xlsx")
-
+util.export_to_file(dict_with_list_values=excel_export_data, export_file_path=excel_file_path)
 
 # Get timeStamp
 util.search_re(log_files[0], pattern="04/24/2021 11:23:41 am")

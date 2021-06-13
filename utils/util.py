@@ -4,7 +4,7 @@ import time
 from time import strftime
 
 
-def export_to_file(export_folder, dict_with_list_values=None, export_file_path=None):
+def export_to_file(dict_with_list_values=None, export_file_path=None, export_folder=None):
     """
     dict_with_list_values = {'Brand': ['Honda Civic','Toyota Corolla','Ford Focus','Audi A4'],
         'Price': [32000,35000,37000,45000]
