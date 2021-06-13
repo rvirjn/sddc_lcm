@@ -4,7 +4,7 @@ import time
 from time import strftime
 
 
-def export_to_file(export_folder, dict_with_list_values=None):
+def export_to_file(export_folder, dict_with_list_values=None, export_file_path=None):
     """
     dict_with_list_values = {'Brand': ['Honda Civic','Toyota Corolla','Ford Focus','Audi A4'],
         'Price': [32000,35000,37000,45000]
@@ -15,8 +15,9 @@ def export_to_file(export_folder, dict_with_list_values=None):
     :param column_name
     :return:
     """
-    time_now = str(strftime("%Y-%m-%d %H-%M-%S", time.localtime()))
-    export_file_path = export_folder + "/" + time_now + ".xlsx"
+    if not export_file_path:
+        time_now = str(strftime("%Y-%m-%d %H-%M-%S", time.localtime()))
+        export_file_path = export_folder + "/" + time_now + ".xlsx"
     columns = dict_with_list_values.keys()
     print('Exporting columns %s to %s' % (columns, export_file_path))
     import pandas as pd
@@ -37,7 +38,7 @@ def get_data_to_export(log_file, column_names=['line', 'info', 'error', 'debug',
             one_row_values = {} # store one row value with key as column name and its value
             for column_name in column_names:
                 column_name = column_name.lower()
-                line = line.lower()
+                line = line.lower().strip()
                 if column_name in line:
                     column_value = 1
                 else:
