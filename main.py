@@ -1,4 +1,4 @@
-from util import get_log_files, get_data_to_export, export_to_file
+from utils.util import get_log_files, get_data_to_export, export_to_file, search_re
 
 __author__ = 'raviranjan'
 
@@ -15,4 +15,7 @@ log_files = get_log_files(log_dir=LOG_DIR)
 
 excel_export_data = get_data_to_export(log_file=log_files[0], column_names=['line', 'info', 'error', 'debug', 'warn', 'exception'])
 
-# export_to_file(export_folder=LOG_DIR, dict_with_list_values=excel_export_data)
+search_re(log_files[0], pattern="04/24/2021 11:23:41 am")
+
+DATA_DIR = "data"
+export_to_file(export_folder=DATA_DIR, dict_with_list_values=excel_export_data)
