@@ -27,31 +27,34 @@ def export_to_file(dict_with_list_values=None, export_file_path=None, export_fol
     return export_file_path
 
 
-def get_data_to_export(log_file, column_names=['line', 'info', 'error', 'debug', 'warn', 'exception']):
+def get_data_to_export(log_files, column_names=['line', 'info', 'error', 'debug', 'warn', 'exception', 'filename']):
     excel_export_data = {
     }
     for column_name in column_names:
         excel_export_data[column_name] = []
     print("Define column %s" % excel_export_data)
-    with open(log_file) as f:
-        for line in f:
-            one_row_values = {} # store one row value with key as column name and its value
-            for column_name in column_names:
-                column_name = column_name.lower()
-                line = line.lower().strip()
-                if column_name in line:
-                    column_value = 1
-                else:
-                    column_value = 0
-                if column_name == "line":
-                    one_row_values[column_name] = line
-                else:
-                    one_row_values[column_name] = column_value
-            for column_name in one_row_values:
-                # append the list value
-                existing_one_column_values = excel_export_data[column_name]
-                existing_one_column_values.append(one_row_values[column_name])
-                excel_export_data[column_name] = existing_one_column_values
+    for log_file in log_files:
+        with open(log_file) as f:
+            for line in f:
+                one_row_values = {} # store one row value with key as column name and its value
+                for column_name in column_names:
+                    column_name = column_name.lower()
+                    line = line.lower().strip()
+                    if column_name in line:
+                        column_value = 1
+                    else:
+                        column_value = 0
+                    if column_name == "line":
+                        one_row_values[column_name] = line
+                    elif column_name == "filename":
+                        one_row_values[column_name] = log_file.split('/')[-1]
+                    else:
+                        one_row_values[column_name] = column_value
+                for column_name in one_row_values:
+                    # append the list value
+                    existing_one_column_values = excel_export_data[column_name]
+                    existing_one_column_values.append(one_row_values[column_name])
+                    excel_export_data[column_name] = existing_one_column_values
 
     # print("%s" % excel_export_data)
     return excel_export_data
@@ -62,13 +65,13 @@ def get_log_files(log_dir):
     for root, dir_, files in os.walk(log_dir):
         for sub_dir in dir_:
             sub_dir_path = os.path.join(root, sub_dir)
-            print("sub_dir: %s" % sub_dir_path)
+            # print("sub_dir: %s" % sub_dir_path)
             # os.system('ls %s' % sub_dir_path)
         for f in files:
             f_path = os.path.join(root, f)
             if ".log" in f_path:
                 log_files.append(f_path)
-    print("Log file under %s are %s" % (log_dir, log_files))
+    print("%s" % (log_files))
     return log_files
 
 

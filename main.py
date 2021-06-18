@@ -47,8 +47,8 @@ print(log_files)
 
 
 ### Get Data from logs and export to Excel
-excel_export_data = util.get_data_to_export(log_file=log_files[0], column_names=['line', 'info', 'error', 'debug', 'warn', 'exception'])
-util.export_to_file(dict_with_list_values=excel_export_data, export_file_path=excel_file_path)
+excel_export_data = util.get_data_to_export(log_files=log_files, column_names=['line', 'info', 'error', 'debug', 'warn', 'exception'])
+# util.export_to_file(dict_with_list_values=excel_export_data, export_file_path=excel_file_path)
 
 # Get timeStamp
 util.search_re(log_files[0], pattern="04/24/2021 11:23:41 am")
