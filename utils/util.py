@@ -152,7 +152,7 @@ def finditer_line(line, regex):
     :param re_parse:
     :return:
     """
-    match_text = 'time Not Found'
+    match_text = ''
     for match in re.finditer(regex, line, re.S):
         match_text = match.group()
     return match_text
