@@ -28,7 +28,6 @@ __author__ = 'raviranjan'
 
 ### Define variables contants
 LOG_DIR = "logs"
-TIME_STAMP_PATTERN = "^(2[0-3]|[01]?[0-9]):(0[1-9]{1}|[1-5]{1}[0-9]):(0[1-9]{1}|[1-5]{1}[0-9])$"
 HOST_PATTERN = r'(^\S+\.[\S+\.]+\S+)\s'
 LOGGER_FILE_PATTERN = r'(^\S+\.[\S+\.]+\S+)\s'
 ERROR_PATTERN = 'ERROR:'
@@ -47,12 +46,14 @@ print(log_files)
 
 
 ### Get Data from logs and export to Excel
-excel_export_data = util.get_data_to_export(log_files=log_files, column_names=['line', 'info', 'error', 'debug', 'warn', 'exception'])
+# excel_export_data = util.get_data_to_export(log_files=log_files, column_names=['line', 'info', 'error', 'debug', 'warn', 'exception'])
 # util.export_to_file(dict_with_list_values=excel_export_data, export_file_path=excel_file_path)
 
 # Get timeStamp
-util.search_re(log_files[0], pattern="04/24/2021 11:23:41 am")
+RE_COMPILE_TIME_STAMP_PATTERN = "(24:00|2[0-3]:[0-5][0-9]|[0-1][0-9]:[0-5][0-9])"
+RE_COMPILE_TIME_STAMP_PATTERN = "(24:00|2[0-3]:[0-5][0-9]|[0-1][0-9]:[0-5][0-9]:[0-5][0-9])"
 
-
-excel_data = pd.read_excel("data/excel_data.xlsx")
-excel_data.head(10)
+for log_file in log_files:
+    print(log_file)
+    # util.search_re(log_file, pattern=RE_COMPILE_TIME_STAMP_PATTERN)
+    util.finditer_(log_file, regex=RE_COMPILE_TIME_STAMP_PATTERN)

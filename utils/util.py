@@ -27,7 +27,7 @@ def export_to_file(dict_with_list_values=None, export_file_path=None, export_fol
     return export_file_path
 
 
-def get_data_to_export(log_files, column_names=['line', 'info', 'error', 'debug', 'warn', 'exception', 'filename']):
+def get_data_to_export(log_files, column_names=['timestamp', 'info', 'error', 'debug', 'warn', 'exception', 'filename', 'line'], add_time_stamp=True):
     excel_export_data = {
     }
     for column_name in column_names:
@@ -41,22 +41,32 @@ def get_data_to_export(log_files, column_names=['line', 'info', 'error', 'debug'
                     column_name = column_name.lower()
                     line = line.lower().strip()
                     if column_name in line:
-                        column_value = 1
+                        cell_value = 1
                     else:
-                        column_value = 0
+                        cell_value = 0
                     if column_name == "line":
-                        one_row_values[column_name] = line
-                    elif column_name == "filename":
-                        one_row_values[column_name] = log_file.split('/')[-1]
-                    else:
-                        one_row_values[column_name] = column_value
+                        cell_value = line
+                    if column_name == "filename":
+                        cell_value = log_file.split('/')[-1]
+                    if add_time_stamp and column_name == "timestamp":
+                        RE_COMPILE_TIME_STAMP_PATTERN = "(24:00|2[0-3]:[0-5][0-9]|[0-1][0-9]:[0-5][0-9]:[0-5][0-9])"
+                        cell_value = finditer_line(line, regex=RE_COMPILE_TIME_STAMP_PATTERN)
+
+                    # Final cell value for that column
+                    one_row_values[column_name] = cell_value
+
                 for column_name in one_row_values:
                     # append the list value
                     existing_one_column_values = excel_export_data[column_name]
                     existing_one_column_values.append(one_row_values[column_name])
                     excel_export_data[column_name] = existing_one_column_values
+    files = []
+    for log_file in log_files:
+        log_file = log_file.split('/')[-1]
+        files.append(log_file)
+    for column_name in column_names:
+        print("Total %s values for Column:%s in all log files" % (len(excel_export_data[column_name]), column_name))
 
-    # print("%s" % excel_export_data)
     return excel_export_data
 
 
@@ -107,7 +117,7 @@ def search_re(line, pattern=None):
         return value
 
 
-def finditer_(log_file_path, regex, read_line=True, re_parse=False):
+def finditer_(log_file_path, regex, read_line=True):
     """
     regex = '(<property name="(.*?)">(.*?)<\/property>)'
     :param log_file_path:
@@ -122,8 +132,6 @@ def finditer_(log_file_path, regex, read_line=True, re_parse=False):
             for line in f:
                 for match in re.finditer(regex, line, re.S):
                     match_text = match.group()
-                    print(match_text)
-                    print(line)
                     match_list.append(match_text)
         else:
             data = f.read()
@@ -131,17 +139,20 @@ def finditer_(log_file_path, regex, read_line=True, re_parse=False):
                 match_text = match.group()
                 match_list.append(match_text)
     f.close()
-    if re_parse:
-        match_list = finditer_again(match_list, regex)
     print(match_list)
     return match_list
 
 
-def finditer_again(parsed_data, regex):
-    data_string = ''.join(parsed_data)
-    match_list = []
-    for match in re.finditer(regex, data_string, re.S):
+def finditer_line(line, regex):
+    """
+    regex = '(<property name="(.*?)">(.*?)<\/property>)'
+    :param log_file_path:
+    :param regex:
+    :param read_line:
+    :param re_parse:
+    :return:
+    """
+    match_text = 'time Not Found'
+    for match in re.finditer(regex, line, re.S):
         match_text = match.group()
-        match_list.append(match_text)
-    print(match_list)
-    return match_list
+    return match_text
