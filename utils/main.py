@@ -31,8 +31,9 @@ print(log_files)
 
 ### Get Data from logs and export to Excel
 excel_export_data = util.extract_data_from_logs(log_files=log_files, column_names=['time', 'info', 'error', 'debug', 'warn', 'exception', 'filename', 'line'])
+
 util.export_to_file(dict_with_list_values=excel_export_data, export_file_path=excel_file_path)
 
 import time
-print(excel_file_path)
-df = pd.read_excel(excel_file_path)
+#print(excel_file_path)
+#df = pd.read_excel(excel_file_path)

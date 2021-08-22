@@ -2,7 +2,7 @@ import re
 import os
 import time
 from time import strftime
-log_files = []
+
 
 def export_to_file(dict_with_list_values=None, export_file_path=None, export_folder=None):
     """
@@ -27,7 +27,9 @@ def export_to_file(dict_with_list_values=None, export_file_path=None, export_fol
     return export_file_path
 
 
-def extract_data_from_logs(log_files=log_files, column_names=['time', 'info', 'error', 'debug', 'warn', 'exception', 'filename', 'line'], add_time_stamp=True):
+def extract_data_from_logs(log_files=None,
+                           column_names=['time', 'info', 'error', 'debug', 'warn', 'exception',
+                                         'filename', 'line'], add_time_stamp=True):
     excel_export_data = {
     }
     for column_name in column_names:
@@ -36,7 +38,7 @@ def extract_data_from_logs(log_files=log_files, column_names=['time', 'info', 'e
     for log_file in log_files:
         with open(log_file) as f:
             for line in f:
-                one_row_values = {} # store one row value with key as column name and its value
+                one_row_values = {}  # store one row value with key as column name and its value
                 for column_name in column_names:
                     column_name = column_name.lower()
                     line = line.lower().strip()
@@ -50,7 +52,15 @@ def extract_data_from_logs(log_files=log_files, column_names=['time', 'info', 'e
                         cell_value = log_file.split('/')[-1]
                     if add_time_stamp and column_name == "time":
                         RE_COMPILE_TIME_STAMP_PATTERN = "(24:00|2[0-3]:[0-5][0-9]|[0-1][0-9]:[0-5][0-9]:[0-5][0-9])"
-                        cell_value = finditer_line(line, regex=RE_COMPILE_TIME_STAMP_PATTERN, log_file=log_file)
+                        cell_value = finditer_line(line, regex=RE_COMPILE_TIME_STAMP_PATTERN,
+                                                   log_file=log_file)
+                        if not cell_value:
+                            line = replace_timestamp_with_time(line)
+                            cell_value = finditer_line(line, regex=RE_COMPILE_TIME_STAMP_PATTERN,
+                                                       log_file=log_file)
+                        if not cell_value:
+                            print(line)
+
                     # Final cell value for that column
                     one_row_values[column_name] = cell_value
 
@@ -64,7 +74,8 @@ def extract_data_from_logs(log_files=log_files, column_names=['time', 'info', 'e
         log_file = log_file.split('/')[-1]
         files.append(log_file)
     for column_name in column_names:
-        print("Total %s values for Column:%s in all log files" % (len(excel_export_data[column_name]), column_name))
+        print("Total %s values for Column:%s in all log files" % (
+        len(excel_export_data[column_name]), column_name))
 
     return excel_export_data
 
@@ -154,9 +165,8 @@ def finditer_line(line, regex, log_file=None):
     match_text = ''
     for match in re.finditer(regex, line, re.S):
         match_text = match.group()
-    if not match_text:
-        print("%s %s" % (log_file, line))
     return match_text
+
 
 def count_cell_entries(df, col_name='', output_col_name=''):
     """
@@ -177,24 +187,47 @@ def count_cell_entries(df, col_name='', output_col_name=''):
 
     Example
     -------
+    >>> value_counts_df(pd.DataFrame({'a':[1, 1, 2, 2, 2]}), 'a')
        count
     a
     2      3
     1      2
     """
-    #df = pd.DataFrame(df[col].value_counts())
-    #df.index.name = col
-    #df.columns = ['count']
+    # df = pd.DataFrame(df[col].value_counts())
+    # df.index.name = col
+    # df.columns = ['count']
     z = df[col_name].value_counts()
-    z1 = z.to_dict() #converts to dictionary
+    z1 = z.to_dict()  # converts to dictionary
     df[output_col_name] = df[col_name].map(z1)
     return df
 
+
 def date2int(df):
     if df.timestamp:
-        t=df['time']
+        t = df['time']
         try:
-            t1=t.timetuple()
+            t1 = t.timetuple()
             return int(time.mktime(t1))
         except ValueError:
             return None
+
+
+def timestamp2date(timestamp):
+    from datetime import datetime
+    return datetime.fromtimestamp(int(timestamp))
+
+
+def replace_timestamp_with_time(line):
+    if line.startswith('-'):
+        tmp = line[line.index('-') + len('-'):].strip()
+    elif line.startswith(' -'):
+        tmp = line[line.index('-') + len('-'):].strip()
+    else:
+        tmp = line
+    tmp = tmp.split(" ")
+    if tmp:
+        tmp = tmp[0]
+        if tmp.isnumeric():
+            time = timestamp2date(tmp)
+            line = line.replace(tmp, str(time))
+    return line
