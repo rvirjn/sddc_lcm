@@ -2,7 +2,7 @@ import re
 import os
 import time
 from time import strftime
-
+log_files = []
 
 def export_to_file(dict_with_list_values=None, export_file_path=None, export_folder=None):
     """
@@ -27,7 +27,7 @@ def export_to_file(dict_with_list_values=None, export_file_path=None, export_fol
     return export_file_path
 
 
-def get_data_to_export(log_files, column_names=['timestamp', 'info', 'error', 'debug', 'warn', 'exception', 'filename', 'line'], add_time_stamp=True):
+def extract_data_from_logs(log_files=log_files, column_names=['time', 'info', 'error', 'debug', 'warn', 'exception', 'filename', 'line'], add_time_stamp=True):
     excel_export_data = {
     }
     for column_name in column_names:
@@ -48,10 +48,9 @@ def get_data_to_export(log_files, column_names=['timestamp', 'info', 'error', 'd
                         cell_value = line
                     if column_name == "filename":
                         cell_value = log_file.split('/')[-1]
-                    if add_time_stamp and column_name == "timestamp":
+                    if add_time_stamp and column_name == "time":
                         RE_COMPILE_TIME_STAMP_PATTERN = "(24:00|2[0-3]:[0-5][0-9]|[0-1][0-9]:[0-5][0-9]:[0-5][0-9])"
-                        cell_value = finditer_line(line, regex=RE_COMPILE_TIME_STAMP_PATTERN)
-
+                        cell_value = finditer_line(line, regex=RE_COMPILE_TIME_STAMP_PATTERN, log_file=log_file)
                     # Final cell value for that column
                     one_row_values[column_name] = cell_value
 
@@ -143,7 +142,7 @@ def finditer_(log_file_path, regex, read_line=True):
     return match_list
 
 
-def finditer_line(line, regex):
+def finditer_line(line, regex, log_file=None):
     """
     regex = '(<property name="(.*?)">(.*?)<\/property>)'
     :param log_file_path:
@@ -155,4 +154,47 @@ def finditer_line(line, regex):
     match_text = ''
     for match in re.finditer(regex, line, re.S):
         match_text = match.group()
+    if not match_text:
+        print("%s %s" % (log_file, line))
     return match_text
+
+def count_cell_entries(df, col_name='', output_col_name=''):
+    """
+    Returns pd.value_counts() as a DataFrame
+
+    Parameters
+    ----------
+    df : Pandas Dataframe
+        Dataframe on which to run value_counts(), must have column `col`.
+    col : str
+        Name of column in `df` for which to generate counts
+
+    Returns
+    -------
+    Pandas Dataframe
+        Returned dataframe will have a single column named "count" which contains the count_values()
+        for each unique value of df[col]. The index name of this dataframe is `col`.
+
+    Example
+    -------
+       count
+    a
+    2      3
+    1      2
+    """
+    #df = pd.DataFrame(df[col].value_counts())
+    #df.index.name = col
+    #df.columns = ['count']
+    z = df[col_name].value_counts()
+    z1 = z.to_dict() #converts to dictionary
+    df[output_col_name] = df[col_name].map(z1)
+    return df
+
+def date2int(df):
+    if df.timestamp:
+        t=df['time']
+        try:
+            t1=t.timetuple()
+            return int(time.mktime(t1))
+        except ValueError:
+            return None
